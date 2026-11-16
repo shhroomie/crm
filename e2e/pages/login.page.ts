@@ -1,26 +1,31 @@
 import { Page, expect } from '@playwright/test'
 
 /**
- * Frappe's standard login page. After a successful login with
- * redirect-to=/crm the browser lands on the CRM SPA.
+ * Frappe's login page with the CRM return URL.
  */
 export class LoginPage {
 	constructor(private page: Page) {}
 
 	async goto() {
 		await this.page.goto('/login?redirect-to=/crm')
-		await this.page.waitForLoadState('networkidle')
 	}
 
 	async login(email = 'Administrator', password = 'admin') {
 		await this.goto()
-		await this.page.fill('#login_email', email)
-		await this.page.fill('#login_password', password)
-		await this.page.click('button.btn-login')
-		await this.page.waitForURL(/\/crm/, { timeout: 30000 })
+		await this.submit(email, password)
+		await this.page.waitForURL((url) => /^\/crm(?:\/|$)/.test(url.pathname), {
+			timeout: 30000,
+		})
+	}
+
+	async submit(email: string, password: string) {
+		const form = this.page.locator('.for-login .form-login')
+		await form.locator('#login_email').fill(email)
+		await form.locator('#login_password').fill(password)
+		await form.locator('button[type="submit"]').click()
 	}
 
 	async expectOnLoginPage() {
-		await expect(this.page).toHaveURL(/.*login.*/)
+		await expect(this.page).toHaveURL((url) => url.pathname === '/login')
 	}
 }

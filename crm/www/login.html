@@ -1,0 +1,28 @@
+{% extends "frappe/www/login.html" %}
+
+{% block head_include %}
+	{{ super() }}
+	{% if crm_login_layout %}
+	<link rel="stylesheet" href="/assets/crm/css/crm-login.css">
+	{% endif %}
+{% endblock %}
+
+{% block page_content %}
+	{% if crm_login_layout %}
+	<div class="crm-login">
+		<aside class="crm-login-brand">
+			<p class="crm-login-wordmark">frappe / CRM</p>
+			<div>
+				<h1>{{ _("Your customers.") }}<br>{{ _("Your conversations.") }}<br>{{ _("One place.") }}</h1>
+				<p>{{ _("A visual-first CRM login prototype for AI-assisted frontend development.") }}</p>
+			</div>
+			<p class="crm-login-caption">{{ _("FYP • Feasibility prototype") }}</p>
+		</aside>
+		<div class="crm-login-form">
+			{{ super() }}
+		</div>
+	</div>
+	{% else %}
+		{{ super() }}
+	{% endif %}
+{% endblock %}
